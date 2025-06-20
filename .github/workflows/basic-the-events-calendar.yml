@@ -53,6 +53,7 @@ jobs:
     uses: stellarwp/testflow/.github/workflows/testflow.yml@main
     with:
       config: 'testflow.yaml'
+      install-browsers: false
       php: ${{ matrix.php }}
       wordpress: ${{ matrix.wordpress }}
       plugin-zips: 'the-events-calendar'
