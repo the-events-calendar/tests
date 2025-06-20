@@ -1,0 +1,43 @@
+{
+  "name": "@stellarwp/tec-tests",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stellarwp/tec-tests.git"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "playwright": "^1.40.0"
+  },
+  "description": "End-to-end testing project for The Events Calendar using TestFlow",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "wordpress",
+    "testing",
+    "e2e",
+    "playwright",
+    "testflow",
+    "events-calendar"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "test": "testflow run",
+    "test:matrix": "testflow run --matrix",
+    "test:debug": "testflow run --debug",
+    "init": "testflow init --with-matrix",
+    "status": "testflow status",
+    "lando:start": "testflow lando start",
+    "lando:stop": "testflow lando stop",
+    "lando:destroy": "testflow lando destroy",
+    "playwright:install": "playwright install --with-deps",
+    "postinstall": "playwright install"
+  },
+  "type": "module",
+  "dependencies": {
+    "@stellarwp/testflow": "git+https://github.com/stellarwp/testflow.git"
+  }
+}

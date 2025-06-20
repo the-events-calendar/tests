@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# TestFlow & Lando generated files
+.lando.yml
+.lando/
+wordpress/
+
+# Test results and reports
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+.tmp/
+
+# Build artifacts
+dist/
+build/ 

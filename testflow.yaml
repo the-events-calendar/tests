@@ -1,0 +1,66 @@
+name: "The Events Calendar E2E Tests"
+description: "End-to-end testing for The Events Calendar using TestFlow"
+
+# Base Lando configuration
+lando:
+  php: '8.2'
+  mysql: '8.0'
+  wordpress: '6.4'
+  webroot: 'wordpress'
+
+# Playwright configuration
+playwright:
+  testDir: 'tests/e2e'
+  patterns:
+    - '**/*.test.ts'
+    - '**/*.spec.ts'
+  timeout: 30000
+  use:
+    headless: false
+    viewport:
+      width: 1280
+      height: 720
+    screenshot: 'only-on-failure'
+    video: 'retain-on-failure'
+    trace: 'on-first-retry'
+
+# Plugin sources configuration
+plugins:
+  # The Events Calendar from WordPress.org
+  - 'wordpress-org:the-events-calendar'
+  # Additional plugins can be added here
+  # - 'wordpress-org:events-calendar-pro'
+
+# WordPress configuration
+wordpress:
+  adminUser: 'admin'
+  adminPassword: 'admin123'
+  adminEmail: 'admin@testflow.local'
+  siteTitle: 'TEC Test Site'
+  siteUrl: 'https://testflow.lndo.site'
+
+# Matrix testing configuration
+matrix:
+  # Test across different WordPress versions
+  wordpress_versions:
+    - '6.6'
+    - '6.7'
+    - '6.8'
+  
+  # Test across different PHP versions
+  php_versions:
+    - '8.1'
+    - '8.2'
+    - '8.3'
+  
+  # Test different plugin combinations
+  plugin_combinations:
+    - ['wordpress-org:the-events-calendar']
+
+# Test environment settings
+environment:
+  variables:
+    WP_DEBUG: true
+    WP_DEBUG_LOG: true
+    WP_DEBUG_DISPLAY: false
+    SCRIPT_DEBUG: true 
