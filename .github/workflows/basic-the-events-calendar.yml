@@ -14,34 +14,8 @@ on:
         default: false
 
 jobs:
-  setup:
-    name: Setup Dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      
-      - name: Install dependencies
-        run: bun install
-      
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
   test:
     name: Test TEC (WP ${{ matrix.wordpress }}, PHP ${{ matrix.php }})
-    needs: setup
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +33,4 @@ jobs:
       retries: '2'
       timeout: '30000'
       debug: ${{ inputs.debug || false }}
-      continue-on-error: false
-      coverage: false
-      artifacts: true
       cache-key: 'tec-${{ matrix.wordpress }}-${{ matrix.php }}' 
