@@ -1,0 +1,230 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Structure & Dependencies
+
+## File Organization Standards
+
+### Test Directory Structure
+```
+tests/
+├── e2e/
+│   ├── events-calendar-installation.test.ts
+│   ├── events-calendar-frontend.test.ts
+│   ├── events-calendar-admin.test.ts
+│   └── [feature-specific].test.ts
+└── fixtures/
+    ├── events.json
+    └── test-data.json
+```
+
+### Configuration Files
+- `testflow.yaml` - TestFlow configuration (project root)
+- `package.json` - Dependencies and scripts
+- `tsconfig.json` - TypeScript configuration
+- `.cursor/rules/*.mdc` - Project guidelines
+
+### Workflow Organization
+```
+.github/
+└── workflows/
+    ├── basic-the-events-calendar.yml
+    ├── [specific-feature].yml
+    └── [performance-testing].yml
+```
+
+## Package.json Requirements
+
+### Required Scripts
+```json
+{
+  "scripts": {
+    "test": "bunx testflow run",
+    "test:matrix": "bunx testflow matrix run",
+    "test:debug": "bunx testflow run --debug",
+    "test:headless": "bunx testflow run --headless",
+    "status": "bunx testflow status",
+    "lando:start": "bunx testflow lando start",
+    "lando:stop": "bunx testflow lando stop",
+    "lando:destroy": "bunx testflow lando destroy",
+    "playwright:install": "playwright install --with-deps",
+    "postinstall": "playwright install"
+  }
+}
+```
+
+### Dependencies Structure
+```json
+{
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "playwright": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}
+```
+
+### Dependency Rules
+- **ALWAYS** include both `@playwright/test` and `playwright` in devDependencies
+- Use `^1.40.0` or later for Playwright versions
+- Include `@types/node` and `typescript` for TypeScript support
+- **NEVER** install global dependencies in CI
+
+## TypeScript Configuration
+
+### tsconfig.json Standards
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "@playwright/test"]
+  },
+  "include": ["tests/**/*"],
+  "exclude": ["node_modules", "test-results", "playwright-report"]
+}
+```
+
+### Key TypeScript Rules
+- Use strict TypeScript configuration
+- Include proper types for Playwright and Node.js
+- Exclude generated directories from compilation
+- Target ES2022 for modern JavaScript features
+
+## TestFlow Configuration
+
+### testflow.yaml Structure
+```yaml
+name: "The Events Calendar Tests"
+description: "E2E tests for The Events Calendar plugin"
+
+wordpress:
+  version: "6.8"
+  
+php:
+  version: "8.2"
+  
+mysql:
+  version: "8.0"
+
+plugins:
+  - name: "the-events-calendar"
+    source: "wordpress.org"
+
+test_directory: "tests/e2e"
+```
+
+### Environment Configuration
+- Keep main config in `testflow.yaml`
+- Use environment-specific overrides sparingly
+- Document all configuration options
+- Validate configuration before commits
+
+## Bun Package Manager
+
+### Bun-specific Rules
+- **ALWAYS** use `bun install` instead of `npm install`
+- Use `bunx` for running local binaries
+- Prefer `bun run` for package.json scripts
+- Include `bun.lock` in version control
+
+### Lock File Management
+- **ALWAYS** commit `bun.lock` to version control
+- **NEVER** manually edit lock files
+- Use `bun install --frozen-lockfile` in CI
+- Regularly audit dependencies with `bun audit`
+
+## Environment Files
+
+### .gitignore Patterns
+```gitignore
+# Dependencies
+node_modules/
+bun.lock (optional - depends on team preference)
+
+# Test outputs
+test-results/
+playwright-report/
+coverage/
+
+# Environment
+.env
+.env.local
+
+# TestFlow
+.lando/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+```
+
+### Environment Variables
+- Use `.env` files for local development
+- **NEVER** commit sensitive data
+- Document required environment variables
+- Use CI-specific environment variables for secrets
+
+## Artifact Management
+
+### Generated Files
+- `test-results/` - Playwright test results
+- `playwright-report/` - HTML reports
+- `coverage/` - Code coverage reports
+- `.lando/` - Lando runtime data
+
+### Cleanup Rules
+- **ALWAYS** add generated directories to `.gitignore`
+- Include cleanup scripts in package.json
+- Set up CI to upload artifacts on failure
+- Use retention policies for CI artifacts
+
+## Documentation Structure
+
+### Required Documentation
+- `README.md` - Project overview and setup
+- `CHANGELOG.md` - Version history
+- `.cursor/rules/*.mdc` - Development guidelines
+- Inline code documentation
+
+### README Standards
+1. Project Overview with description
+2. Features list with emojis
+3. Prerequisites and installation
+4. Configuration explanation
+5. Usage examples
+6. CI/CD documentation
+7. Project structure diagram
+8. Contributing guidelines
+
+## Maintenance Scripts
+
+### Utility Scripts
+```json
+{
+  "scripts": {
+    "clean": "rm -rf test-results playwright-report coverage",
+    "clean:all": "bun run clean && bun run lando:destroy",
+    "reset": "bun run clean:all && bun install",
+    "audit": "bun audit",
+    "update": "bun update"
+  }
+}
+```
+
+### Regular Maintenance
+- Update dependencies monthly
+- Clean test artifacts regularly
+- Review and update documentation
+- Audit security vulnerabilities

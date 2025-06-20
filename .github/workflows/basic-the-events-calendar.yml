@@ -1,79 +1,39 @@
-name: Basic The Events Calendar Tests
+name: The Events Calendar Testing
 
 on:
   pull_request:
     branches: [ main ]
   schedule:
-    # Run tests daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: '0 */6 * * *'  # Every 6 hours (4 times per day)
   workflow_dispatch:
     inputs:
       debug:
         description: 'Enable debug mode'
         required: false
-        default: 'false'
         type: boolean
+        default: false
 
 jobs:
   test:
-    name: "WP ${{ matrix.wordpress }} | PHP ${{ matrix.php }} | TEC ${{ matrix.plugins }}"
-    runs-on: ubuntu-latest
-    
+    name: Test TEC (WP ${{ matrix.wordpress }}, PHP ${{ matrix.php }})
     strategy:
       fail-fast: false
       matrix:
         wordpress: ['6.7', '6.8']
         php: ['8.1', '8.2']
-        plugins: ['the-events-calendar']
-
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - name: Setup Lando
-        uses: lando/setup-lando@v3
-        with:
-          lando-version: stable
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Configure TestFlow matrix
-        run: |
-          bunx testflow matrix configure \
-            --wordpress="${{ matrix.wordpress }}" \
-            --php="${{ matrix.php }}" \
-            --plugins="${{ matrix.plugins }}"
-
-      - name: Start TestFlow environment
-        run: bunx testflow run --headless
-        env:
-          DEBUG: ${{ github.event.inputs.debug == 'true' && '1' || '0' }}
-
-      - name: Run tests
-        run: bunx testflow run tests/e2e/events-calendar-installation.test.ts
-        env:
-          DEBUG: ${{ github.event.inputs.debug == 'true' && '1' || '0' }}
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-wp${{ matrix.wordpress }}-php${{ matrix.php }}-${{ matrix.plugins }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 30
-
-      - name: Cleanup TestFlow environment
-        if: always()
-        run: bunx testflow lando destroy || true 
+    
+    uses: stellarwp/testflow/.github/workflows/testflow.yml@main
+    with:
+      config: 'testflow.yaml'
+      php: ${{ matrix.php }}
+      wordpress: ${{ matrix.wordpress }}
+      plugin-zips: ${{ matrix.plugin-zips || 'the-events-calendar' }}
+      test-patterns: 'tests/e2e/**/*.test.ts'
+      workers: '1'
+      retries: '2'
+      timeout: '30000'
+      debug: ${{ inputs.debug || false }}
+      continue-on-error: false
+      coverage: false
+      artifacts: true
+      cache-key: 'tec-${{ matrix.wordpress }}-${{ matrix.php }}' 

@@ -105,16 +105,11 @@ The initial test suite includes:
 
 The project supports testing across multiple configurations:
 
-### WordPress Versions
-- WordPress 6.7
-- WordPress 6.8
-
-### PHP Versions
-- PHP 8.1
-- PHP 8.2
-
-### Plugin Combinations
-- The Events Calendar (standalone)
+### Environment Configuration
+- **WordPress**: 6.8 (latest)
+- **PHP**: 8.2 (current stable)
+- **MySQL**: 8.0 (latest stable)
+- **Plugin**: The Events Calendar (from WordPress.org)
 
 ## GitHub Actions
 
@@ -124,9 +119,9 @@ The project uses specific workflows for different testing scenarios:
 
 #### `basic-the-events-calendar.yml`
 - **Purpose**: Tests basic TEC functionality 
-- **Matrix**: WordPress 6.7-6.8 × PHP 8.1-8.2 × TEC
+- **Configuration**: WordPress 6.8, PHP 8.2, MySQL 8.0
 - **Triggers**: PR to main, daily at 2 AM UTC, manual dispatch
-- **Features**: 4 total matrix combinations, focused on latest WP versions
+- **Features**: Comprehensive E2E testing with The Events Calendar
 
 ### Common Features
 - **Manual Triggers**: All workflows support manual dispatch with debug mode

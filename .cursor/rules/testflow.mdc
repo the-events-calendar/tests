@@ -1,0 +1,132 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TestFlow Usage and Configuration Rules
+
+## Command Usage
+- Always use `bunx testflow` (never `testflow` directly)
+- TestFlow CLI available commands: `run`, `init`, `validate`, `profiles`, `lando`
+- No `matrix configure` command exists - matrix is defined in testflow.yaml
+
+## Reusable Workflow Integration
+- Use TestFlow's official reusable workflow: `stellarwp/testflow/.github/workflows/testflow.yml@main`
+- Configure through GitHub Actions `with:` parameters, not command-line flags
+- Let the reusable workflow handle TestFlow installation and execution
+- Matrix strategy defined in calling workflow, passed to TestFlow via parameters
+
+## Configuration Management
+- Primary config file: `testflow.yaml`
+- Matrix configurations defined in testflow.yaml `profiles` section
+- Use `bunx testflow validate` to verify configuration syntax
+- Use `bunx testflow profiles` to list available profiles
+
+## Available Workflow Parameters
+```yaml
+with:
+  config: 'testflow.yaml'                    # Configuration file path
+  profile: ''                                # Configuration profile to use
+  php: '8.2'                                # PHP version
+  mysql: '8.0'                              # MySQL version  
+  wordpress: '6.8'                          # WordPress version
+  plugin-zips: 'the-events-calendar'        # Plugin ZIP patterns
+  test-patterns: 'tests/e2e/**/*.test.ts'   # Test file patterns
+  workers: '1'                              # Number of test workers
+  retries: '2'                              # Number of test retries
+  timeout: '30000'                          # Test timeout in milliseconds
+  activate-plugins: ''                      # Plugins to activate
+  skip-activation: ''                       # Plugins to skip activation
+  debug: false                              # Enable debug mode
+  continue-on-error: false                  # Continue on test failures
+  coverage: false                           # Generate test coverage
+  artifacts: true                           # Upload test artifacts
+  cache-key: 'custom-suffix'                # Custom cache key suffix
+```
+
+## Matrix Configuration in testflow.yaml
+```yaml
+name: "The Events Calendar E2E Tests"
+description: "End-to-end testing for The Events Calendar plugin"
+
+# Default configuration
+lando:
+  php: '8.2'
+  mysql: '8.0'
+  wordpress: '6.8'
+  webroot: 'wordpress'
+
+# Matrix profiles for different combinations
+profiles:
+  wp67-php81:
+    lando:
+      php: '8.1'
+      wordpress: '6.7'
+  wp68-php82:
+    lando:
+      php: '8.2'
+      wordpress: '6.8'
+```
+
+## Local Development Commands
+- `bunx testflow init` - Initialize new configuration
+- `bunx testflow validate -c testflow.yaml` - Validate configuration
+- `bunx testflow run -c testflow.yaml` - Run tests locally
+- `bunx testflow lando info` - Check Lando status
+- `bunx testflow lando destroy` - Clean up environment
+
+## Plugin Configuration
+- Use `wordpress-org:plugin-name` for WordPress.org plugins
+- Use `github:owner/repo` for GitHub-hosted plugins
+- Use `zip:path/to/file.zip` for local ZIP files
+- Multiple plugins: `the-events-calendar,events-calendar-pro`
+
+## WordPress Configuration
+```yaml
+wordpress:
+  adminUser: 'admin'
+  adminPassword: 'admin123'
+  adminEmail: 'admin@testflow.local'
+  siteTitle: 'TEC Test Site'
+  siteUrl: 'https://testflow.lndo.site'
+```
+
+## Environment Variables
+```yaml
+environment:
+  variables:
+    WP_DEBUG: true
+    WP_DEBUG_LOG: true
+    WP_DEBUG_DISPLAY: false
+    SCRIPT_DEBUG: true
+```
+
+## Test Configuration
+```yaml
+playwright:
+  testDir: 'tests/e2e'
+  patterns:
+    - '**/*.test.ts'
+    - '**/*.spec.ts'
+  timeout: 30000
+  use:
+    headless: true
+    viewport:
+      width: 1280
+      height: 720
+    screenshot: 'only-on-failure'
+    video: 'retain-on-failure'
+    trace: 'on-first-retry'
+```
+
+## Error Handling
+- TestFlow reusable workflow handles all error scenarios
+- Automatic retry mechanism with configurable retry count
+- Proper cleanup of Lando environments
+- Artifact collection for failed tests (screenshots, videos, logs)
+
+## CI/CD Integration
+- Use GitHub Actions matrix for parallel testing
+- Pass matrix variables to TestFlow via workflow parameters
+- TestFlow handles caching, dependency installation, and cleanup
+- No need for manual Lando or Playwright setup in calling workflows

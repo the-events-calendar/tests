@@ -5,7 +5,7 @@ description: "End-to-end testing for The Events Calendar using TestFlow"
 lando:
   php: '8.2'
   mysql: '8.0'
-  wordpress: '6.4'
+  wordpress: '6.8'
   webroot: 'wordpress'
 
 # Playwright configuration
@@ -43,7 +43,6 @@ wordpress:
 matrix:
   # Test across different WordPress versions
   wordpress_versions:
-    - '6.6'
     - '6.7'
     - '6.8'
   
@@ -51,7 +50,6 @@ matrix:
   php_versions:
     - '8.1'
     - '8.2'
-    - '8.3'
   
   # Test different plugin combinations
   plugin_combinations:
