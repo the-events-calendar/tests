@@ -14,8 +14,36 @@ on:
         default: false
 
 jobs:
+  setup:
+    name: Setup Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+      
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            .testflow-cache
+          key: testflow-${{ runner.os }}-${{ hashFiles('**/bun.lockb', '**/package.json') }}-${{ github.sha }}
+
   test:
     name: Test TEC (WP ${{ matrix.wordpress }}, PHP ${{ matrix.php }})
+    needs: setup
     strategy:
       fail-fast: false
       matrix:
