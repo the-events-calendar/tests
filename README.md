@@ -112,11 +112,9 @@ The project supports testing across multiple configurations:
 ### PHP Versions
 - PHP 8.1
 - PHP 8.2
-- PHP 8.3
 
 ### Plugin Combinations
 - The Events Calendar (standalone)
-- The Events Calendar + Events Calendar Pro
 
 ## GitHub Actions
 
@@ -126,9 +124,9 @@ The project uses specific workflows for different testing scenarios:
 
 #### `basic-the-events-calendar.yml`
 - **Purpose**: Tests basic TEC functionality 
-- **Matrix**: WordPress 6.7-6.8 × PHP 8.1-8.3 × TEC (with Pro variants)
-- **Triggers**: PR to main/develop, daily at 2 AM UTC, manual dispatch
-- **Features**: 8 total matrix combinations, including Pro testing on latest WP
+- **Matrix**: WordPress 6.7-6.8 × PHP 8.1-8.2 × TEC
+- **Triggers**: PR to main, daily at 2 AM UTC, manual dispatch
+- **Features**: 4 total matrix combinations, focused on latest WP versions
 
 ### Common Features
 - **Manual Triggers**: All workflows support manual dispatch with debug mode
@@ -143,7 +141,7 @@ The project uses specific workflows for different testing scenarios:
 # Go to Actions → Basic The Events Calendar Tests → Run workflow → Enable debug
 
 # Tests run automatically on:
-# - Pull requests to main/develop branches
+# - Pull requests to main branch
 # - Daily at 2 AM UTC via scheduled run
 ```
 

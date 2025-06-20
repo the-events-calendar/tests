@@ -49,18 +49,18 @@ jobs:
 
       - name: Configure TestFlow matrix
         run: |
-          testflow matrix configure \
+          bunx testflow matrix configure \
             --wordpress="${{ matrix.wordpress }}" \
             --php="${{ matrix.php }}" \
             --plugins="${{ matrix.plugins }}"
 
       - name: Start TestFlow environment
-        run: testflow run --headless
+        run: bunx testflow run --headless
         env:
           DEBUG: ${{ github.event.inputs.debug == 'true' && '1' || '0' }}
 
       - name: Run tests
-        run: testflow run tests/e2e/events-calendar-installation.test.ts
+        run: bunx testflow run tests/e2e/events-calendar-installation.test.ts
         env:
           DEBUG: ${{ github.event.inputs.debug == 'true' && '1' || '0' }}
 
@@ -76,4 +76,4 @@ jobs:
 
       - name: Cleanup TestFlow environment
         if: always()
-        run: testflow lando destroy || true 
+        run: bunx testflow lando destroy || true 
